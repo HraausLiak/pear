@@ -29,6 +29,7 @@
 
 #include "public/base/option.h"
 #include "public/base/option_set.h"
+#include "public/log/log_core.h"
 
 namespace pear {
     namespace base {
@@ -52,6 +53,10 @@ namespace pear {
             void HookSignal(int signal);
             void UnhookSignal(int signal);
 
+            static Application *instance(void) {
+                return app_;
+            }
+
         protected:
             virtual void OnDefineOptions(OptionSet& options) = 0;
             virtual int OnOption(const ::std::string& name, const ::std::string& arg) = 0;
@@ -71,6 +76,9 @@ namespace pear {
 
             ::std::vector<::std::string> arguemnts_;
             OptionSet options_;
+
+            // application global data
+            ::pear::log::LogCore log_core_;
 
             static Application *app_;
         };

@@ -20,6 +20,7 @@
 #include "application.h"
 #include "exception.h"
 
+#include <cassert>
 #include <csignal>
 
 namespace pear {
@@ -30,11 +31,12 @@ namespace pear {
         Application::Application(void)
             : arguemnts_()
             , options_()
+            , log_core_()
         {
+            assert(app_ == NULL);
             if (app_ != NULL) {
                 exit(-1);
             }
-
             app_ = this;
         }
 

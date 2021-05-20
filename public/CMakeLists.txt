@@ -15,6 +15,21 @@ set(public_SRC
     base/option.cc
     base/option_set.h
     base/option_set.cc
+    
+    log/log.h
+    log/log.cc
+    log/log_core.h
+    log/log_core.cc
+    
+    sys/process.h
+    sys/process.cc
+    
+    util/file.h
+    util/file.cc
+    util/string.h
+    util/string.cc
+    util/time.h
+    util/time.cc
 )
 
 add_library(public STATIC ${public_SRC})

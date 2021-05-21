@@ -42,19 +42,21 @@ namespace pear {
             enum AccessMode
             {
                 AM_READ = 0x1,
-                AM_WRITE = 0x2
+                AM_WRITE = 0x2,
+                AM_RW = AM_READ | AM_WRITE
             };
 
             File(void);
             ~File(void);
 
-            int Open(const char *filename, AccessMode access_mode = AM_READ);
+            int Open(const char *filename, AccessMode access_mode = AM_RW);
             void Close(void);
 
             long int GetFileSize(void);
             void GetTimes(struct tm *ctime, struct tm *mtime, struct tm *atime);
 
             ::std::size_t Write(const char *data, ::std::size_t size);
+            void Flush(void);
 
             bool IsValid(void) {
                 return handle_ != INVALID_HANDLE_VALUE;

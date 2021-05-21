@@ -81,12 +81,14 @@ namespace pear {
             int console_;
             int rotate_;
             int rotate_file_size_;
+            int flush_file_size_;
             const char *directory_;
             SeverityLevel severity_level_;
 
             //// current log file
             pear::util::File log_file_; // log file
             long int log_size_;         // log file size
+            int log_write_size_;        // log file current write size
             struct tm log_file_tm_;     // log file create time
         };
 

@@ -33,10 +33,10 @@ namespace pear {
 
         File::~File(void)
         {
-
+            Close();
         }
 
-        int File::Open(const char *filename, AccessMode access_mode /* = AM_READ */)
+        int File::Open(const char *filename, AccessMode access_mode /* = AM_RW */)
         {
             DWORD dwAccess = 0;
             if (access_mode & AM_READ) {
@@ -53,6 +53,7 @@ namespace pear {
         void File::Close(void)
         {
             if (handle_ != INVALID_HANDLE_VALUE) {
+                ::FlushFileBuffers(handle_);
                 ::CloseHandle(handle_);
             }
         }
@@ -64,10 +65,37 @@ namespace pear {
 
         void File::GetTimes(struct tm *ctime, struct tm *mtime, struct tm *atime)
         {
-            FILETIME c_time, m_time, a_time;
+            FILETIME c_time, m_time, a_time, l_time;
+            SYSTEMTIME s_time;
             if (::GetFileTime(handle_, &c_time, &a_time, &m_time))
             {
-                
+                if (ctime != NULL && ::FileTimeToLocalFileTime(&c_time, &l_time)) {
+                    ::FileTimeToSystemTime(&l_time, &s_time);
+                    ctime->tm_year = s_time.wYear - 1900;
+                    ctime->tm_mon = s_time.wMonth - 1;
+                    ctime->tm_mday = s_time.wDay;
+                    ctime->tm_hour = s_time.wHour;
+                    ctime->tm_min = s_time.wMinute;
+                    ctime->tm_sec = s_time.wSecond;
+                }
+                if (mtime != NULL && ::FileTimeToLocalFileTime(&m_time, &l_time)) {
+                    ::FileTimeToSystemTime(&l_time, &s_time);
+                    mtime->tm_year = s_time.wYear - 1900;
+                    mtime->tm_mon = s_time.wMonth - 1;
+                    mtime->tm_mday = s_time.wDay;
+                    mtime->tm_hour = s_time.wHour;
+                    mtime->tm_min = s_time.wMinute;
+                    mtime->tm_sec = s_time.wSecond;
+                }
+                if (atime != NULL && ::FileTimeToLocalFileTime(&a_time, &l_time)) {
+                    ::FileTimeToSystemTime(&l_time, &s_time);
+                    atime->tm_year = s_time.wYear - 1900;
+                    atime->tm_mon = s_time.wMonth - 1;
+                    atime->tm_mday = s_time.wDay;
+                    atime->tm_hour = s_time.wHour;
+                    atime->tm_min = s_time.wMinute;
+                    atime->tm_sec = s_time.wSecond;
+                }
             }
         }
 
@@ -76,6 +104,11 @@ namespace pear {
             DWORD bytes_writen = 0;
             ::WriteFile(handle_, data, size, &bytes_writen, NULL);
             return (::std::size_t)bytes_writen;
+        }
+
+        void File::Flush(void)
+        {
+            ::FlushFileBuffers(handle_);
         }
 
         bool File::Exists(const char *filename) {

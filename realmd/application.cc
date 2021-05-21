@@ -18,6 +18,7 @@
  *****************************************************************************/
 
 #include "application.h"
+#include "public/util/string.h"
 
 #include <stdio.h>
 
@@ -48,6 +49,7 @@ int RealmdApplication::OnOption(const ::std::string& name, const ::std::string& 
 
 int RealmdApplication::OnInitialize(void)
 {
+    get_log()->Setup(::pear::log::Log::CON_OUT, ::pear::log::Log::ROT_FILE_DATE, "./");
     return EXIT_OK;
 }
 

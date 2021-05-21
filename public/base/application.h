@@ -30,6 +30,7 @@
 #include "public/base/option.h"
 #include "public/base/option_set.h"
 #include "public/log/log_core.h"
+#include "public/log/log.h"
 
 namespace pear {
     namespace base {
@@ -57,6 +58,14 @@ namespace pear {
                 return app_;
             }
 
+            time_t uptime(void) const {
+                return up_time_;
+            }
+
+            ::pear::log::Log *get_log() {
+                return log_;
+            }
+
         protected:
             virtual void OnDefineOptions(OptionSet& options) = 0;
             virtual int OnOption(const ::std::string& name, const ::std::string& arg) = 0;
@@ -78,7 +87,9 @@ namespace pear {
             OptionSet options_;
 
             // application global data
+            time_t up_time_;
             ::pear::log::LogCore log_core_;
+            ::pear::log::Log *log_;
 
             static Application *app_;
         };

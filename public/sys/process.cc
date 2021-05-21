@@ -22,6 +22,8 @@
 #ifdef __WINDOWS__
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <Psapi.h>
+#pragma comment(lib, "Psapi")
 #else
 #endif
 
@@ -43,7 +45,8 @@ namespace pear {
         const char *GetModuleName(void)
         {
 #ifdef __WINDOWS__
-            ::GetModuleFileNameA(NULL, s_app_name, MAX_PATH);
+            //::GetModuleFileNameA(NULL, s_app_name, MAX_PATH);
+            ::GetModuleBaseNameA(::GetCurrentProcess(), NULL, s_app_name, MAX_PATH);
 #endif
             return s_app_name;
         }

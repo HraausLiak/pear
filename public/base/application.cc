@@ -22,6 +22,7 @@
 
 #include <cassert>
 #include <csignal>
+#include <ctime>
 
 namespace pear {
     namespace base {
@@ -31,7 +32,10 @@ namespace pear {
         Application::Application(void)
             : arguemnts_()
             , options_()
+            
+            , up_time_(0)
             , log_core_()
+            , log_(NULL)
         {
             assert(app_ == NULL);
             if (app_ != NULL) {
@@ -57,6 +61,8 @@ namespace pear {
                     if (rc != EXIT_OK) {
                         break;
                     }
+
+                    ::time(&up_time_);
 
                     rc = Main(arguemnts_);
                 }
@@ -117,6 +123,9 @@ namespace pear {
                     return rc;
                 }
             }
+
+            // initialize
+            log_ = new ::pear::log::Log();
 
             // call user initialize
             return OnInitialize();

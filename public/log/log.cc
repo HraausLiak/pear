@@ -19,6 +19,7 @@
 
 #include "log.h"
 #include "../sys/process.h"
+#include "../sys/thread.h"
 #include "../util/string.h"
 #include "../util/time.h"
 
@@ -239,7 +240,8 @@ namespace pear {
             ::pear::util::Time::localtime(&local_time, &now);
             int str_len = ::pear::util::String::snprintf(message, LOG_MSG_SIZE, "[%04d-%02d-%02d %02d:%02d:%02d], %s, %d, ",
                 local_time.tm_year + 1900, local_time.tm_mon + 1, local_time.tm_mday,
-                local_time.tm_hour, local_time.tm_min, local_time.tm_sec, SeverityLevelStrings[severity_level], - 1);
+                local_time.tm_hour, local_time.tm_min, local_time.tm_sec, SeverityLevelStrings[severity_level], 
+                ::pear::sys::Thread::GetCurrentThreadId());
             if (str_len < 0) {
                 printf("error: %s,%d -- %s\n", __FILE__, __LINE__,
                     strerror_s(errmsg, sizeof(errmsg), errno));

@@ -27,11 +27,28 @@ set(public_SRC
     sys/process.cc
     sys/file.h
     sys/file.cc
+    sys/thread.h
     
     util/string.h
     util/string.cc
     util/time.h
     util/time.cc
+    
+    net/server_socket.h
+    net/server_socket.cc
+    net/server_socket_events.h
+    net/thread.h
+    net/thread.cc
+    net/socket.h
+    net/socket.cc
 )
 
-add_library(public STATIC ${public_SRC})
+if (WIN32)
+set(plat_SRC
+    sys/thread_win.h
+    sys/thread_win.cc
+)
+else()
+endif()
+
+add_library(public STATIC ${public_SRC} ${plat_SRC})

@@ -34,6 +34,7 @@
 
 namespace pear {
     namespace net {
+        class TcpServer;
 
         class Socket
         {
@@ -44,6 +45,10 @@ namespace pear {
 
             bool Open(struct event_base *ev_base, ::evutil_socket_t fd, struct sockaddr *sa = NULL, int socklen = 0);
             void Close(void);
+
+            inline int get_id(void) const {
+                return id_;
+            }
 
             inline const ::std::string& get_host(void) const {
                 return host_;
@@ -82,11 +87,16 @@ namespace pear {
             virtual void OnTimeout(void) {}
 
         private:
+            friend class TcpServer;
+            void set_id(int id) { id_ = id; }
+
             void EofOrError(void);
 
             static void ReadCallback(struct bufferevent *, void *);
             static void WriteCallback(struct bufferevent *, void *);
             static void EventCallback(struct bufferevent *, short, void *);
+
+            int id_;
 
             evutil_socket_t fd_;
             struct bufferevent *bev_;

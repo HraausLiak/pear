@@ -41,6 +41,9 @@ set(public_SRC
     net/thread.cc
     net/socket.h
     net/socket.cc
+    net/tcp_server.h
+    net/tcp_server.cc
+    net/socket_factory.h
 )
 
 if (WIN32)

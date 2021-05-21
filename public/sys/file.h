@@ -17,13 +17,14 @@
  *
  *****************************************************************************/
 
-#ifndef PUBLIC_UTIL_FILE_H_
-#define PUBLIC_UTIL_FILE_H_
+#ifndef PUBLIC_SYS_FILE_H_
+#define PUBLIC_SYS_FILE_H_
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif
 
+#include <cstdint>
 #include <ctime>
 #include <cstdio>
 
@@ -33,30 +34,29 @@
 #endif
 
 namespace pear {
-    namespace util {
+    namespace sys {
 
 #ifdef __WINDOWS__
         class File
         {
         public:
-            enum AccessMode
-            {
-                AM_READ = 0x1,
-                AM_WRITE = 0x2,
-                AM_RW = AM_READ | AM_WRITE
-            };
+            const static int ACCESS_READ = 0x1;
+            const static int ACCESS_WRITE = 0x2;
+
+            const static int FILE_NO_BUFFERING = 0x1;
 
             File(void);
-            ~File(void);
+            virtual ~File(void);
 
-            int Open(const char *filename, AccessMode access_mode = AM_RW);
+            int Open(const char *filename, int access_mode = ACCESS_READ | ACCESS_WRITE, int flags = 0);
             void Close(void);
 
             long int GetFileSize(void);
-            void GetTimes(struct tm *ctime, struct tm *mtime, struct tm *atime);
+            bool GetTimes(struct tm *ctime, struct tm *mtime, struct tm *atime);
 
-            ::std::size_t Write(const char *data, ::std::size_t size);
-            void Flush(void);
+            ::std::size_t Read(::std::uint8_t *data, ::std::size_t size);
+            ::std::size_t Write(const ::std::uint8_t *data, ::std::size_t size);
+            bool Flush(void);
 
             bool IsValid(void) {
                 return handle_ != INVALID_HANDLE_VALUE;
@@ -71,4 +71,4 @@ namespace pear {
     }
 }
 
-#endif // PUBLIC_UTIL_FILE_H_
+#endif // PUBLIC_SYS_FILE_H_

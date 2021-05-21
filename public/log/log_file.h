@@ -17,42 +17,28 @@
  *
  *****************************************************************************/
 
-#include "string.h"
+#ifndef PUBLIC_LOG_LOG_FILE_H_
+#define PUBLIC_LOG_LOG_FILE_H_
 
-#include <cstdio>
-#include <cstdarg>
-#include <cstring>
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+# pragma once
+#endif
+
+#include "public/sys/file.h"
 
 namespace pear {
-    namespace util {
+    namespace log {
 
-        int String::snprintf(char *dest, int size, char *format, ...)
+        class LogFile : public ::pear::sys::File
         {
-            int rc = -1;
-            ::std::va_list args;
-            va_start(args, format);
-            rc = String::vsnprintf(dest, size, format, args);
-            va_end(args);
-            return rc;
-        }
+        public:
+            LogFile(void);
+            virtual ~LogFile(void);
 
-        int String::vsnprintf(char *dest, int size, const char *format, ::std::va_list args)
-        {
-#ifdef __WINDOWS__
-            return ::vsnprintf_s(dest, size, _TRUNCATE, format, args);
-#else
-#error
-#endif
-        }
+            int Open(const char *filename);
+        };
 
-        const char *String::strerror(char *dest, int size, int eno)
-        {
-#ifdef __WINDOWS__
-            ::strerror_s(dest, size, eno);
-#else
-#error
-#endif
-            return dest;
-        }
     }
 }
+
+#endif // PUBLIC_LOG_LOG_FILE_H_

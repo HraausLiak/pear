@@ -43,6 +43,7 @@ namespace pear {
                 EXIT_OK = 0,
                 EXIT_USAGE = 64,
                 EXIT_CONFIG = 65,
+                EXIT_MEMORY = 66,
                 EXIT_SOFTWARE = 70,
             };
 
@@ -58,16 +59,16 @@ namespace pear {
                 return app_;
             }
 
-            time_t uptime(void) const {
+            inline time_t uptime(void) const {
                 return up_time_;
             }
 
-            ::pear::log::Log *get_log() {
+            inline ::pear::log::Log *get_log() {
                 return log_;
             }
 
         protected:
-            virtual void OnDefineOptions(OptionSet& options) = 0;
+            virtual void OnDefineOptions(::pear::base::OptionSet& options) = 0;
             virtual int OnOption(const ::std::string& name, const ::std::string& arg) = 0;
             virtual void OnSignal(int signal);
 
@@ -84,7 +85,7 @@ namespace pear {
 
 
             ::std::vector<::std::string> arguemnts_;
-            OptionSet options_;
+            ::pear::base::OptionSet options_;
 
             // application global data
             time_t up_time_;

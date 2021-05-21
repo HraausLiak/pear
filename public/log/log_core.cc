@@ -18,9 +18,11 @@
  *****************************************************************************/
 
 #include "log_core.h"
+#include "log.h"
 
 #include <cassert>
 #include <cstdlib>
+#include <cstring>
 
 namespace pear {
     namespace log {
@@ -28,8 +30,11 @@ namespace pear {
         LogCore *LogCore::core_ = NULL;
 
         LogCore::LogCore(void)
+            : log_index_(0)
         {
             assert(core_ == NULL);
+            memset(logs_, 0, sizeof(logs_));
+
             if (core_ != NULL) {
                 exit(-1);
             }
@@ -41,5 +46,37 @@ namespace pear {
 
         }
 
+        Log *LogCore::NewLog(void)
+        {
+            if (log_index_ >= MAX_LOGS) {
+                return NULL;
+            }
+
+            Log *log = new Log();
+            logs_[++log_index_] = log;
+            return log;
+        }
+
+        void LogCore::DeleteLog(Log *log)
+        {
+            int i = 0;
+            for (; i < MAX_LOGS; ++i)
+            {
+                if (logs_[i] == log)
+                {
+                    break;
+                }
+            }
+
+            delete log;
+
+            if (i < MAX_LOGS)
+            {
+                logs_[i] = NULL;
+            }
+            else {
+                fprintf(stderr, "this Log is not create by the LogCore\n");
+            }
+        }
     }
 }

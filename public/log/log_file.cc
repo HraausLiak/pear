@@ -17,42 +17,27 @@
  *
  *****************************************************************************/
 
-#include "string.h"
-
-#include <cstdio>
-#include <cstdarg>
-#include <cstring>
+#include "log_file.h"
 
 namespace pear {
-    namespace util {
+    namespace log {
 
-        int String::snprintf(char *dest, int size, char *format, ...)
+        LogFile::LogFile(void)
         {
-            int rc = -1;
-            ::std::va_list args;
-            va_start(args, format);
-            rc = String::vsnprintf(dest, size, format, args);
-            va_end(args);
-            return rc;
+
         }
 
-        int String::vsnprintf(char *dest, int size, const char *format, ::std::va_list args)
+        LogFile::~LogFile(void)
         {
-#ifdef __WINDOWS__
-            return ::vsnprintf_s(dest, size, _TRUNCATE, format, args);
-#else
-#error
-#endif
+
         }
 
-        const char *String::strerror(char *dest, int size, int eno)
+        int LogFile::Open(const char *filename)
         {
-#ifdef __WINDOWS__
-            ::strerror_s(dest, size, eno);
-#else
-#error
-#endif
-            return dest;
+            return File::Open(filename, 
+                ::pear::sys::File::ACCESS_WRITE, 
+                0);
         }
+
     }
 }

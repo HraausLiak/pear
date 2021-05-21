@@ -32,15 +32,13 @@ RealmdApplication::~RealmdApplication(void)
 
 }
 
-void RealmdApplication::OnDefineOptions(pear::base::OptionSet& options)
+void RealmdApplication::OnDefineOptions(::pear::base::OptionSet& options)
 {
-    options.AddOption(pear::base::Option("help", "h", "show usage").is_required(false));
+    options.AddOption(::pear::base::Option("help", "h", "show usage").is_required(false));
 }
 
 int RealmdApplication::OnOption(const ::std::string& name, const ::std::string& arg)
 {
-    printf("RealmdApplication::OnOption: %s,%s\n", name.c_str(), arg.c_str());
-
     if (name == "help") {
         return EXIT_USAGE;
     }
@@ -49,7 +47,7 @@ int RealmdApplication::OnOption(const ::std::string& name, const ::std::string& 
 
 int RealmdApplication::OnInitialize(void)
 {
-    get_log()->Setup(::pear::log::Log::CON_OUT, ::pear::log::Log::ROT_FILE_DATE, "./");
+    get_log()->set_rotate_size(0x20000);
     return EXIT_OK;
 }
 
@@ -60,5 +58,6 @@ void RealmdApplication::OnUninitialize(void)
 
 int RealmdApplication::Main(::std::vector<::std::string>& unknownArgs)
 {
+    get_log()->info("Application uptime: %d", uptime());
     return EXIT_OK;
 }

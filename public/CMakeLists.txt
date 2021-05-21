@@ -18,14 +18,16 @@ set(public_SRC
     
     log/log.h
     log/log.cc
+    log/log_file.h
+    log/log_file.cc
     log/log_core.h
     log/log_core.cc
     
     sys/process.h
     sys/process.cc
+    sys/file.h
+    sys/file.cc
     
-    util/file.h
-    util/file.cc
     util/string.h
     util/string.cc
     util/time.h

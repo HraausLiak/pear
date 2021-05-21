@@ -27,10 +27,11 @@
 #include <cstdarg>
 #include <cstdio>
 
-#include "public/util/file.h"
+#include "public/log/log_file.h"
 
 namespace pear {
     namespace log {
+        class LogCore;
 
         class Log
         {
@@ -50,17 +51,25 @@ namespace pear {
 
             enum SeverityLevel
             {
-                SL_DEBUG,
-                SL_INFO,
-                SL_LOG,
-                SL_WARNING,
-                SL_ERROR
+                SL_DEBUG = 0x00,
+                SL_INFO = 0x01,
+                SL_LOG = 0x02,
+                SL_WARNING = 0x03,
+                SL_ERROR = 0x04
             };
 
+        protected:
+            friend class LogCore;
             Log(void);
             ~Log(void);
 
+        public:
+
             int Setup(int console, int rotate, const char *directory);
+
+            void set_rotate_size(int size) {
+                rotate_file_size_ = size;
+            }
 
             void info(const char* format, ...);
             void log(const char* format, ...);
@@ -86,10 +95,10 @@ namespace pear {
             SeverityLevel severity_level_;
 
             //// current log file
-            pear::util::File log_file_; // log file
-            long int log_size_;         // log file size
-            int log_write_size_;        // log file current write size
-            struct tm log_file_tm_;     // log file create time
+            ::pear::log::LogFile log_file_;     // log file
+            long int log_size_;                 // log file size
+            int log_write_size_;                // log file current write size
+            struct tm log_file_tm_;             // log file create time
         };
 
     }

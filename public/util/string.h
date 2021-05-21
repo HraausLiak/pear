@@ -24,6 +24,8 @@
 # pragma once
 #endif
 
+#include <cstdarg>
+
 namespace pear {
     namespace util {
 
@@ -31,6 +33,7 @@ namespace pear {
         {
         public:
             static int snprintf(char *dest, int size, char *format, ...);
+            static int vsnprintf(char *dest, int size, const char *format, ::std::va_list args);
             static const char *strerror(char *dest, int size, int eno);
         };
 

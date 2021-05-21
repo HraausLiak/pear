@@ -26,10 +26,13 @@
 
 namespace pear {
     namespace log {
+        class Log;
 
         class LogCore
         {
         public:
+            const static int MAX_LOGS = 0x10;
+
             LogCore(void);
             ~LogCore(void);
 
@@ -37,7 +40,12 @@ namespace pear {
                 return core_;
             }
 
+            Log* NewLog(void);
+            void DeleteLog(Log *log);
+
         private:
+            int log_index_;
+            Log *logs_[MAX_LOGS];
 
             static LogCore *core_;
         };

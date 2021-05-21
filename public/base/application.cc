@@ -125,7 +125,12 @@ namespace pear {
             }
 
             // initialize
-            log_ = new ::pear::log::Log();
+            log_ = log_core_.NewLog();
+            if (!log_) {
+                return EXIT_MEMORY;
+            }
+            log_->Setup(::pear::log::Log::CON_OUT, 
+                ::pear::log::Log::ROT_FILE_DATE | ::pear::log::Log::ROT_FILE_SIZE, "./");
 
             // call user initialize
             return OnInitialize();

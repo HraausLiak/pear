@@ -26,14 +26,14 @@
 
 #include "public/base/application.h"
 
-class RealmdApplication : public pear::base::Application
+class RealmdApplication : public ::pear::base::Application
 {
 public:
     RealmdApplication(void);
     virtual ~RealmdApplication(void);
 
 protected:
-    virtual void OnDefineOptions(pear::base::OptionSet& options);
+    virtual void OnDefineOptions(::pear::base::OptionSet& options);
     virtual int OnOption(const ::std::string& name, const ::std::string& arg);
     virtual int OnInitialize(void);
     virtual void OnUninitialize(void);

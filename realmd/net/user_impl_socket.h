@@ -17,32 +17,28 @@
  *
  *****************************************************************************/
 
-#ifndef REALMD_APPLICATION_H_
-#define REALMD_APPLICATION_H_
+#ifndef REALMD_NET_USER_IMPL_SOCKET_H_
+#define REALMD_NET_USER_IMPL_SOCKET_H_
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif
 
-#include "public/base/application.h"
-#include "public/net/tcp_server.h"
-#include "net/user_impl_socket_factory.h"
+#include "public/net/socket.h"
 
-class RealmdApplication : public ::pear::base::Application
+class UserImplSocket : public ::pear::net::Socket
 {
 public:
-    RealmdApplication(void);
-    virtual ~RealmdApplication(void);
+    UserImplSocket(void);
+    virtual ~UserImplSocket(void);
 
 protected:
-    virtual void OnDefineOptions(::pear::base::OptionSet& options);
-    virtual int OnOption(const ::std::string& name, const ::std::string& arg);
-    virtual int OnInitialize(void);
-    virtual void OnUninitialize(void);
-    virtual int Main(::std::vector<::std::string>& unknownArgs);
-
-private:
-    ::pear::net::TcpServer user_impl_server_;
+    virtual void OnOpen(void);
+    virtual void OnRead(void);
+    virtual void OnWrite(void);
+    virtual void OnEof(void);
+    virtual void OnClose(void);
+    virtual void OnError(void);
 };
 
-#endif // REALMD_APPLICATION_H_
+#endif // REALMD_NET_USER_IMPL_SOCKET_H_

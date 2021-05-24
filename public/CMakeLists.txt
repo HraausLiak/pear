@@ -28,6 +28,9 @@ set(public_SRC
     sys/file.h
     sys/file.cc
     sys/thread.h
+    sys/mutex.h
+    sys/lock_guard.h
+    sys/net.h
     
     util/string.h
     util/string.cc
@@ -50,6 +53,7 @@ if (WIN32)
 set(plat_SRC
     sys/thread_win.h
     sys/thread_win.cc
+    sys/mutex_win.h
 )
 else()
 endif()

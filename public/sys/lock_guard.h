@@ -17,32 +17,36 @@
  *
  *****************************************************************************/
 
-#ifndef REALMD_APPLICATION_H_
-#define REALMD_APPLICATION_H_
+#ifndef PUBLIC_SYS_LOCK_GUARD_H_
+#define PUBLIC_SYS_LOCK_GUARD_H_
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif
 
-#include "public/base/application.h"
-#include "public/net/tcp_server.h"
-#include "net/user_impl_socket_factory.h"
+namespace pear {
+    namespace sys {
 
-class RealmdApplication : public ::pear::base::Application
-{
-public:
-    RealmdApplication(void);
-    virtual ~RealmdApplication(void);
+        template<typename T>
+        class LockGuard
+        {
+        public:
+            LockGuard(T& x)
+                : x_(x)
+            {
+                x_.Lock();
+            }
 
-protected:
-    virtual void OnDefineOptions(::pear::base::OptionSet& options);
-    virtual int OnOption(const ::std::string& name, const ::std::string& arg);
-    virtual int OnInitialize(void);
-    virtual void OnUninitialize(void);
-    virtual int Main(::std::vector<::std::string>& unknownArgs);
+            ~LockGuard(void)
+            {
+                x_.Unlock();
+            }
 
-private:
-    ::pear::net::TcpServer user_impl_server_;
-};
+        private:
+            T& x_;
+        };
 
-#endif // REALMD_APPLICATION_H_
+    }
+}
+
+#endif // PUBLIC_SYS_LOCK_GUARD_H_

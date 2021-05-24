@@ -17,32 +17,34 @@
  *
  *****************************************************************************/
 
-#ifndef REALMD_APPLICATION_H_
-#define REALMD_APPLICATION_H_
+#ifndef REALMD_NET_USER_IMPL_SOCKET_FACTORY_H_
+#define REALMD_NET_USER_IMPL_SOCKET_FACTORY_H_
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif
 
-#include "public/base/application.h"
-#include "public/net/tcp_server.h"
-#include "net/user_impl_socket_factory.h"
+#include <cassert>
+#include "public/net/socket_factory.h"
+#include "user_impl_socket.h"
 
-class RealmdApplication : public ::pear::base::Application
+class UserImplSocketFactory : public ::pear::net::SocketFactory
 {
 public:
-    RealmdApplication(void);
-    virtual ~RealmdApplication(void);
+    UserImplSocketFactory(void){}
+    virtual ~UserImplSocketFactory(void){}
 
-protected:
-    virtual void OnDefineOptions(::pear::base::OptionSet& options);
-    virtual int OnOption(const ::std::string& name, const ::std::string& arg);
-    virtual int OnInitialize(void);
-    virtual void OnUninitialize(void);
-    virtual int Main(::std::vector<::std::string>& unknownArgs);
+    virtual ::pear::net::Socket *Create(void)
+    {
+        return new UserImplSocket();
+    }
 
-private:
-    ::pear::net::TcpServer user_impl_server_;
+    virtual void Destory(::pear::net::Socket *sock)
+    {
+        UserImplSocket *user_impl_sock = static_cast<UserImplSocket*>(sock);
+        assert(user_impl_sock != NULL);
+        delete user_impl_sock;
+    }
 };
 
-#endif // REALMD_APPLICATION_H_
+#endif // REALMD_NET_USER_IMPL_SOCKET_FACTORY_H_

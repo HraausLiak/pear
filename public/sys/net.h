@@ -17,32 +17,52 @@
  *
  *****************************************************************************/
 
-#ifndef REALMD_APPLICATION_H_
-#define REALMD_APPLICATION_H_
+#ifndef PUBLIC_SYS_NET_H_
+#define PUBLIC_SYS_NET_H_
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif
 
-#include "public/base/application.h"
-#include "public/net/tcp_server.h"
-#include "net/user_impl_socket_factory.h"
+#include <string>
 
-class RealmdApplication : public ::pear::base::Application
-{
-public:
-    RealmdApplication(void);
-    virtual ~RealmdApplication(void);
+#ifdef __WINDOWS__
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#else
+#error
+#endif
 
-protected:
-    virtual void OnDefineOptions(::pear::base::OptionSet& options);
-    virtual int OnOption(const ::std::string& name, const ::std::string& arg);
-    virtual int OnInitialize(void);
-    virtual void OnUninitialize(void);
-    virtual int Main(::std::vector<::std::string>& unknownArgs);
+#include <event2/util.h>
 
-private:
-    ::pear::net::TcpServer user_impl_server_;
-};
+namespace pear {
+    namespace sys {
 
-#endif // REALMD_APPLICATION_H_
+#ifdef __WINDOWS__
+        inline void CloseSocket(evutil_socket_t fd) {
+            closesocket((SOCKET)fd);
+        }
+
+        inline int GetNetErrorCode(void) {
+            return ::WSAGetLastError();
+        }
+
+        inline ::std::string& GetNetErrorMessage(int code, ::std::string& message) {
+            char *s = NULL;
+            FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                NULL, code,
+                MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                (LPSTR)&s, 0, NULL);
+            message = s;
+            LocalFree(s);
+            return message;
+        }
+#else
+#error
+#endif
+
+
+    }
+}
+
+#endif // PUBLIC_SYS_NET_H_

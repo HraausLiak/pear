@@ -24,6 +24,7 @@
 # pragma once
 #endif
 
+#include <string>
 #include <boost/scoped_ptr.hpp>
 #include <boost/unordered_map.hpp>
 
@@ -31,6 +32,7 @@
 #include "public/net/server_socket.h"
 #include "public/net/thread.h"
 #include "public/net/socket_factory.h"
+#include "public/sys/mutex.h"
 
 namespace pear {
     namespace net {
@@ -45,25 +47,45 @@ namespace pear {
 
             bool Start(const char *host, int port, int backlog, int addtional_workers = 0);
             void Stop(void);
+            void Join(void);
+
+            void CloseSocket(Socket *sock);
+
+            inline int get_errno(void) const {
+                return errno_;
+            }
+
+            inline const ::std::string& get_error_message(void) const {
+                return error_message_;
+            }
 
         private:
             bool CreateAddtionalWorkers(int addtional_workers);
             void CloseAddtionalWorkers(void);
 
             static void OnAccept(::evutil_socket_t, struct sockaddr *, int, void *);
+            void DoAccept(::evutil_socket_t, struct sockaddr *, int, void *);
+
+            ::pear::net::Thread *FindWorker(void);
 
             ::pear::net::ServerSocket listener_;
 
             // clients
             typedef ::boost::unordered_map<int, ::pear::net::Socket*>   SocketMap;
-            int conn_id_gen_;
+            volatile int conn_id_gen_;
             SocketMap connections_;
+            ::pear::sys::Mutex conn_lock_;
             ::boost::scoped_ptr<::pear::net::SocketFactory> conn_factory_;
 
             // main worker
             ::pear::net::Thread main_worker_;
             // addtional workers
+            int addtional_workers_num_;
             ::pear::net::Thread **addtional_workers_;
+
+            // error
+            int errno_;
+            ::std::string error_message_;
         };
 
     }

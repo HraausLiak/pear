@@ -53,8 +53,12 @@ namespace pear {
             }
 
         private:
+            static void OnDummyTimeout(evutil_socket_t sock, short event, void *);
+
             struct event_base *ev_base_;
+            struct event *ev_dummy_;
             volatile int busy_load_;
+            bool stopped_;
         };
 
     }

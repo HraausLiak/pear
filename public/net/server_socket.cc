@@ -32,7 +32,7 @@ namespace pear {
             , acceptor_(NULL)
 
             , user_data_(user_data)
-            , event_listen_(on_listen)
+            , listen_callback_(on_listen)
         {
 
         }
@@ -80,8 +80,8 @@ namespace pear {
             int socklen, void *user_data)
         {
             ServerSocket *pss = static_cast<ServerSocket*>(user_data);
-            assert(pss && pss->event_listen_);
-            pss->event_listen_(fd, sa, socklen, pss->user_data_);
+            assert(pss && pss->listen_callback_);
+            pss->listen_callback_(fd, sa, socklen, pss->user_data_);
         }
 
     }

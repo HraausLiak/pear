@@ -51,6 +51,7 @@ namespace pear {
             , rotate_file_size_(0x8000000) // 128MB
             , flush_file_size_(0x1000)
             , directory_(NULL)
+            , file_name_(NULL)
             , severity_level_(SL_DEBUG)
 
             , log_file_()
@@ -65,12 +66,13 @@ namespace pear {
         
         }
 
-        int Log::Setup(int console, int rotate, const char *directory)
+        int Log::Setup(int console, int rotate, const char *directory, const char *filename /* = "" */)
         {
             assert(!inited_);
             console_ = console;
             rotate_ = rotate;
             directory_ = directory;
+            file_name_ = filename;
 
             return 0;
         }
@@ -95,7 +97,7 @@ namespace pear {
 
             ::std::va_list args;
             va_start(args, format);
-            PrintMessage(format, args, SL_INFO);
+            PrintMessage(format, args, SL_LOG);
             va_end(args);
         }
 
@@ -107,7 +109,7 @@ namespace pear {
 
             ::std::va_list args;
             va_start(args, format);
-            PrintMessage(format, args, SL_INFO);
+            PrintMessage(format, args, SL_WARNING);
             va_end(args);
         }
 
@@ -119,7 +121,7 @@ namespace pear {
 
             ::std::va_list args;
             va_start(args, format);
-            PrintMessage(format, args, SL_INFO);
+            PrintMessage(format, args, SL_ERROR);
             va_end(args);
         }
 
@@ -131,7 +133,7 @@ namespace pear {
 
             ::std::va_list args;
             va_start(args, format);
-            PrintMessage(format, args, SL_INFO);
+            PrintMessage(format, args, SL_DEBUG);
             va_end(args);
         }
 
@@ -147,7 +149,7 @@ namespace pear {
             char errmsg[0x200];
 
             // test origin file
-            int str_len = ::pear::util::String::snprintf(filename, size, "%s%s.%04d%02d%02d.log", directory_, modname,
+            int str_len = ::pear::util::String::snprintf(filename, size, "%s%s%s.%04d%02d%02d.log", directory_, modname, file_name_,
                 local_time.tm_year + 1900, local_time.tm_mon + 1, local_time.tm_mday);
             if (str_len < 0) {
                 printf("error: %s,%d -- %s\n", __FILE__, __LINE__,
@@ -163,7 +165,7 @@ namespace pear {
             for (;; ++id)
             {
                 // test id file
-                str_len = ::pear::util::String::snprintf(filename, size, "%s%s.%04d%02d%02d.%d.log", directory_, modname,
+                str_len = ::pear::util::String::snprintf(filename, size, "%s%s%s.%04d%02d%02d.%d.log", directory_, modname, file_name_,
                     local_time.tm_year + 1900, local_time.tm_mon + 1, local_time.tm_mday, id);
                 if (str_len < 0) {
                     printf("error: %s,%d -- %s\n", __FILE__, __LINE__,
@@ -177,7 +179,7 @@ namespace pear {
 
             --id;
             if (id < 1) {
-                if (::pear::util::String::snprintf(filename, size, "%s%s.%04d%02d%02d.log", directory_, modname,
+                if (::pear::util::String::snprintf(filename, size, "%s%s%s.%04d%02d%02d.log", directory_, modname, file_name_,
                     local_time.tm_year + 1900, local_time.tm_mon + 1, local_time.tm_mday) < 0) {
                     printf("error: %s,%d -- %s\n", __FILE__, __LINE__,
                         strerror_s(errmsg, sizeof(errmsg), errno));
@@ -186,7 +188,7 @@ namespace pear {
             }
             else {
                 file_id_ = id;
-                if (::pear::util::String::snprintf(filename, size, "%s%s.%04d%02d%02d.%d.log", directory_, modname,
+                if (::pear::util::String::snprintf(filename, size, "%s%s%s.%04d%02d%02d.%d.log", directory_, modname, file_name_,
                     local_time.tm_year + 1900, local_time.tm_mon + 1, local_time.tm_mday, id) < 0) {
                     printf("error: %s,%d -- %s\n", __FILE__, __LINE__,
                         strerror_s(errmsg, sizeof(errmsg), errno));
@@ -205,7 +207,7 @@ namespace pear {
             if (rot_size)
             {
                 ++file_id_;
-                if (::pear::util::String::snprintf(filename, size, "%s.%04d%02d%02d.%d.log", modname,
+                if (::pear::util::String::snprintf(filename, size, "%s%s%s.%04d%02d%02d.%d.log", directory_, modname, file_name_,
                     time->tm_year + 1900, time->tm_mon + 1, time->tm_mday, file_id_) < 0) {
                     --file_id_;
                     printf("error: %s,%d -- %s\n", __FILE__, __LINE__,
@@ -215,7 +217,7 @@ namespace pear {
             }
             else
             {
-                if (::pear::util::String::snprintf(filename, size, "%s.%04d%02d%02d.log", modname,
+                if (::pear::util::String::snprintf(filename, size, "%s%s%s.%04d%02d%02d.log", directory_, modname, file_name_,
                     time->tm_year + 1900, time->tm_mon + 1, time->tm_mday) < 0) {
                     printf("error: %s,%d -- %s\n", __FILE__, __LINE__,
                         strerror_s(errmsg, sizeof(errmsg), errno));

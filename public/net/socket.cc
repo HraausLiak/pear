@@ -28,7 +28,8 @@ namespace pear {
     namespace net {
 
         Socket::Socket(void)
-            : fd_(-1)
+            : id_(-1)
+            , fd_(-1)
             , bev_(NULL)
             , host_("")
             , port_(0)

@@ -21,6 +21,16 @@
 
 int main(int argc, char *argv[])
 {
+#ifdef __WINDOWS__
+    WSADATA wsa;
+    ::WSAStartup(MAKEWORD(2, 2), &wsa);
+#endif
+    
     RealmdApplication app;
-    return app.Run(argc, argv);
+    int rc = app.Run(argc, argv);
+
+#ifdef __WINDOWS__
+    WSACleanup();
+#endif
+    return rc;
 }

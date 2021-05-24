@@ -42,8 +42,11 @@ namespace pear {
             bool Open(const char *address, int port, int backlog);
             void Close(void);
 
-            inline void SetListenCallback(::pear::net::EVENT_LISTEN callback) {
-                event_listen_ = callback;
+            inline void set_listen_callback(::pear::net::EVENT_LISTEN callback) {
+                listen_callback_ = callback;
+            }
+            inline void set_user_data(void *user_data) {
+                user_data_ = user_data;
             }
 
         private:
@@ -61,7 +64,7 @@ namespace pear {
 
             // events
             void *user_data_;
-            ::pear::net::EVENT_LISTEN event_listen_;
+            ::pear::net::EVENT_LISTEN listen_callback_;
         };
 
     }

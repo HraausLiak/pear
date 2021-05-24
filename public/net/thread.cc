@@ -26,13 +26,19 @@ namespace pear {
 
         Thread::Thread(void)
             : ev_base_(NULL)
+            , ev_dummy_(NULL)
             , busy_load_(0)
+            , stopped_(false)
         {
 
         }
 
         Thread::~Thread(void)
         {
+            if (ev_dummy_ != NULL) {
+                ::event_free(ev_dummy_);
+            }
+
             if (ev_base_ != NULL) {
                 ::event_base_free(ev_base_);
             }
@@ -45,21 +51,49 @@ namespace pear {
                 if ((ev_base_ = event_base_new()) == NULL) {
                     break;
                 }
+
+                if ((ev_dummy_ = event_new(ev_base_, -1, EV_TIMEOUT | EV_PERSIST, 
+                    &Thread::OnDummyTimeout, this)) == NULL) {
+                    break;
+                }
+
+                struct timeval tv = { 1, 0 };
+                if (0 != event_add(ev_dummy_, &tv))
+                    break;
+
                 return ::pear::sys::Thread::Start();
             } while (false);
+
+            if (ev_dummy_ != NULL) {
+                ::event_free(ev_dummy_);
+                ev_dummy_ = NULL;
+            }
+
+            if (ev_base_ != NULL) {
+                ::event_base_free(ev_base_);
+                ev_base_ = NULL;
+            }
+
             return false;
         }
 
         void Thread::Stop(void)
         {
-            assert(ev_base_ != NULL);
-            ::event_base_loopbreak(ev_base_);
+            if (!stopped_ && ev_base_ != NULL) {
+                stopped_ = true;
+                ::event_base_loopbreak(ev_base_);
+            }
         }
 
         void Thread::Run(void)
         {
             assert(ev_base_ != NULL);
             ::event_base_dispatch(ev_base_);
+        }
+
+        void Thread::OnDummyTimeout(evutil_socket_t sock, short event, void *)
+        {
+
         }
     }
 }

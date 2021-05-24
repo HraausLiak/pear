@@ -52,10 +52,12 @@ namespace pear {
 
         void Thread::Join(void)
         {
-            assert(handle_ != -1L);
-            ::WaitForSingleObject(HANDLE(handle_), INFINITE);
-            ::CloseHandle(HANDLE(handle_));
-            handle_ = -1L;
+            if (handle_ != -1L)
+            {
+                ::WaitForSingleObject(HANDLE(handle_), INFINITE);
+                ::CloseHandle(HANDLE(handle_));
+                handle_ = -1L;
+            }
         }
 
         unsigned int Thread::Proc(void* arg)

@@ -20,9 +20,11 @@
 #include "application.h"
 #include "public/util/string.h"
 
-#include <stdio.h>
+#include <cerrno>
+#include <cstdio>
 
 RealmdApplication::RealmdApplication(void)
+    : user_impl_server_(new UserImplSocketFactory)
 {
 
 }
@@ -47,7 +49,6 @@ int RealmdApplication::OnOption(const ::std::string& name, const ::std::string& 
 
 int RealmdApplication::OnInitialize(void)
 {
-    get_log()->set_rotate_size(0x20000);
     return EXIT_OK;
 }
 
@@ -59,5 +60,16 @@ void RealmdApplication::OnUninitialize(void)
 int RealmdApplication::Main(::std::vector<::std::string>& unknownArgs)
 {
     get_log()->info("Application uptime: %d", uptime());
+
+    // start user interface server
+    if (!user_impl_server_.Start("0.0.0.0", 3724, 1024, 1)) {
+        get_log()->error("start user impl server failed: %d, %s", user_impl_server_.get_errno(),
+            user_impl_server_.get_error_message().c_str());
+        return EXIT_FAILURE;
+    }
+    get_log()->info("start user inerface server ok");
+
+    user_impl_server_.Join();
+
     return EXIT_OK;
 }

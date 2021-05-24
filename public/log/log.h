@@ -65,7 +65,7 @@ namespace pear {
 
         public:
 
-            int Setup(int console, int rotate, const char *directory);
+            int Setup(int console, int rotate, const char *directory, const char *filename = "");
 
             void set_rotate_size(int size) {
                 rotate_file_size_ = size;
@@ -92,6 +92,7 @@ namespace pear {
             int rotate_file_size_;
             int flush_file_size_;
             const char *directory_;
+            const char *file_name_;
             SeverityLevel severity_level_;
 
             //// current log file

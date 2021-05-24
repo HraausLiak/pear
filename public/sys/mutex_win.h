@@ -17,32 +17,47 @@
  *
  *****************************************************************************/
 
-#ifndef REALMD_APPLICATION_H_
-#define REALMD_APPLICATION_H_
+#ifndef PUBLIC_SYS_MUTEX_WIN_H_
+#define PUBLIC_SYS_MUTEX_WIN_H_
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
 #endif
 
-#include "public/base/application.h"
-#include "public/net/tcp_server.h"
-#include "net/user_impl_socket_factory.h"
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 
-class RealmdApplication : public ::pear::base::Application
-{
-public:
-    RealmdApplication(void);
-    virtual ~RealmdApplication(void);
+namespace pear {
+    namespace sys {
 
-protected:
-    virtual void OnDefineOptions(::pear::base::OptionSet& options);
-    virtual int OnOption(const ::std::string& name, const ::std::string& arg);
-    virtual int OnInitialize(void);
-    virtual void OnUninitialize(void);
-    virtual int Main(::std::vector<::std::string>& unknownArgs);
+        class Mutex
+        {
+        public:
+            Mutex(void)
+            {
+                ::InitializeCriticalSection(&cs_);
+            }
 
-private:
-    ::pear::net::TcpServer user_impl_server_;
-};
+            ~Mutex()
+            {
+                ::DeleteCriticalSection(&cs_);
+            }
 
-#endif // REALMD_APPLICATION_H_
+            inline void Lock(void)
+            {
+                ::EnterCriticalSection(&cs_);
+            }
+
+            inline void Unlock(void)
+            {
+                ::LeaveCriticalSection(&cs_);
+            }
+
+        private:
+            CRITICAL_SECTION cs_;
+        };
+
+    }
+}
+
+#endif // PUBLIC_SYS_MUTEX_WIN_H_
